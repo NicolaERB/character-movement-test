@@ -1,0 +1,196 @@
+ <!DOCTYPE html>
+ <html>
+
+	 <head>
+	 	<style type="text/css">
+
+
+	 		@keyframes float {
+				0% {
+
+					
+					transform: translatey(0px);
+				}
+				50% {
+					
+					transform: translatey(-10px);
+				}
+				100% {
+					
+					transform: translatey(0px);
+				}
+			}
+
+
+	 		.circle{
+
+	 			background: blue;
+	 			width: 50px;
+	 			height: 50px;
+	 			border-radius: 25px;
+	 			position: absolute;
+	 			top: 400px;
+	 			z-index: 100;
+
+	 		}
+
+	 		.eye{
+
+	 			background: white;
+	 			width: 15px;
+	 			height: 15px;
+	 			border-radius: 10px;
+	 			position: relative;
+	 			top: 15px;
+
+	 		}
+	 		body{
+
+	 			width: 100%;
+	 			height: 100%;
+	 		}
+
+
+	 	</style>
+
+	 	<style type="text/css">
+	 		.square{
+
+	 			background: grey;
+	 			width: 50px;
+	 			height: 50px;
+	 			position: absolute;
+	 			left: 500px;
+	 			top: 380px;
+	 		}
+	 		.question{
+	 			position: absolute;
+	 			font-size: 25px !important;
+	 			color: green;
+	 			transform: translatey(0px);
+				animation: float 2s ease-in-out infinite;
+
+	 		}
+	 	</style>
+
+	 	<script src="https://use.fontawesome.com/dcb27197d9.js"></script>
+
+	 </head>
+	 <body>
+
+	
+
+	 	<div class="circle">
+	 		<div class="eye"></div>
+	 	</div>
+
+	 	<div class = "square"></div>
+
+	 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	 <script type="text/javascript">
+	 	
+	 	var destinationX= 100;
+
+	 	var speed = 2;
+
+	 	//move function to get the click position to set destinationX
+
+	 	function move(event){
+	 		console.log(event.offsetX)
+	 		var circleobj= $(".circle");
+	 		destinationX = event.offsetX;
+
+	 	}
+
+
+
+	 	$(document).click(move); //setting click to move function
+
+	 	setInterval(function(){
+
+	 		var circleobj= $(".circle");
+	 		var currentX= $(circleobj).offset().left;
+	 		var dif = 0;
+			var offset = 25
+	 		var movement=0;
+
+			var eye = $(".eye");
+	 		//move forward
+	 		if (destinationX > currentX - offset) {
+
+	 			movement=1;
+
+	 			$(eye).css("left", 30);
+
+
+				
+
+	 		}
+
+
+	 		//move back
+	 		if (destinationX < currentX + offset ) {
+
+	 			movement = -1;
+
+	 			$(eye).css("left", 5);
+
+	 		}
+
+	 		dif = (destinationX - currentX) - offset ;
+
+	 		dif = Math.abs(dif);
+	 		//console.log(dif);
+
+	 		if (dif > speed){
+
+	 			//setting possition of circle X position 
+	 			$(circleobj).css("left", currentX + (movement * speed));
+
+	 		}
+
+	 		var squareobj = $(".square");
+	 		var squareX= $(squareobj).offset().left;
+
+	 		var squaredif = squareX - currentX ;
+	 		squaredif = Math.abs(squaredif);
+	 		//console.log(squaredif);
+
+	 		if (squaredif < 100){
+	 			$(squareobj).css("background", "green");
+
+	 			if($(".question").length < 1){
+
+	 				var squareY = $(squareobj).offset().top;
+	 				var question = document.createElement("i");
+	 				$(question).addClass("fa fa-question-circle question");
+	 				$(question).css("left", squareX + 15);
+	 				$(question).css("top", squareY - 30);
+	 				$("body").append(question);
+	 				
+	 			}
+
+	 		} else{
+	 			$(squareobj).css("background", "grey");
+
+	 			
+					if($(".question").length > 0){
+		 				$(".question").remove();
+		 			}
+	 			
+	 		}
+
+
+	 	},17);
+
+
+
+
+
+
+	 </script>
+
+	 
+	 </body>
+ </html>
