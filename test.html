@@ -44,6 +44,18 @@
 	 			top: 15px;
 
 	 		}
+
+	 			.ball{
+
+ 			background: blue;
+ 			width: 5px;
+ 			height: 5px;
+ 			border-radius: 10px;
+ 			position: absolute;
+
+ 			}
+
+
 	 		body{
 
 	 			width: 100%;
@@ -89,6 +101,117 @@
 	 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 	 <script type="text/javascript">
+
+
+
+
+
+	 		class particle{
+ 			
+ 			constructor(){
+
+
+ 				this.velocity = {x: 0, y: 0};
+				this.mass = 0.1; //kg
+				this.radius = 2.5; // 1px = 1cm
+				this.restitution = -0.7;
+
+
+ 				this.create();
+ 				
+ 			
+ 			}
+
+ 			remove(){
+
+ 				$(this.div).remove();
+
+ 			}
+
+ 			setRandomV(min, max){
+
+ 			this.velocity.x = Math.random() * (max-min+1) +min;
+ 			this.velocity.y = Math.random() * (max-min+1) +min -7;
+
+ 			}
+
+ 			create(){
+
+ 				this.div= document.createElement("div");
+ 				$(this.div).addClass("ball");
+ 				$("body").append(this.div);
+
+			  
+ 			}
+
+ 			moveTo(x,y){
+
+ 				this.x = x;
+ 				this.y = y;
+
+ 				$(this.div).css("left", x);
+ 				$(this.div).css("top", y);
+ 				
+
+
+ 			}
+ 			    			
+
+ 			update(){
+ 				var Cd = 0.47;  // Dimensionless
+				var rho = 1.22; // kg / m^3
+				var A = Math.PI * this.radius * this.radius / (10000); // m^2
+				var ag = 9.81;  // m / s^2
+
+
+				var Fx = -0.5 * Cd * A * rho * this.velocity.x * this.velocity.x * this.velocity.x / Math.abs(this.velocity.x);
+        		var Fy = -0.5 * Cd * A * rho * this.velocity.y * this.velocity.y * this.velocity.y / Math.abs(this.velocity.y);
+
+ 				Fx = (isNaN(Fx) ? 0 : Fx);
+        		Fy = (isNaN(Fy) ? 0 : Fy);
+
+        		// Calculate acceleration ( F = ma )
+        		var ax = Fx / this.mass;
+        		var ay = ag + (Fy / this.mass);
+ 				
+ 				// Integrate to get velocity
+        		this.velocity.x += ax*0.017;
+        		this.velocity.y += ay*0.017;
+
+        		 // Integrate to get position
+        		this.x += this.velocity.x*0.017*100;
+        		this.y += this.velocity.y*0.017*100;
+
+
+        		this.moveTo(this.x, this.y);
+
+        		  // Handle collisions
+			    if (this.y > 500 - this.radius) {
+			        this.velocity.y *= this.restitution;
+			        this.y = 500 - this.radius;
+   				 }
+
+   				 if(this.x>1400- this.radius){
+   				 	this.velocity.x *= this.restitution;
+			        this.x = 1400 - this.radius;
+
+   				 }
+
+   				 if(this.x<10 + this.radius){
+   				 	this.velocity.x *= this.restitution;
+			        this.x = 10 + this.radius;
+   				 }
+
+ 			}
+
+ 		}
+
+
+
+
+ 		var allParticles = [];
+
+
 	 	
 	 	var destinationX= 100;
 
@@ -167,8 +290,43 @@
 	 				$(question).addClass("fa fa-question-circle question");
 	 				$(question).css("left", squareX + 15);
 	 				$(question).css("top", squareY - 30);
+
+	 				$(question).click(function(){
+
+	 					for (var i = 0; i < 100; i++) {
+	 						
+	 					
+		 					var p = new particle();
+		 					var questionY = $(".question").offset().top;
+		 					var questionX = $(".question").offset().left;
+		 					p.moveTo(questionX, questionY);
+		 					p.setRandomV(-1, 1);
+
+
+		 					var id = allParticles.push(p);
+
+		 					
+
+
+	 					} 
+
+	 					setTimeout(function(){
+
+	 						for (var i = 0; i < allParticles.length; i++) {
+	 								
+
+	 							allParticles[i].remove();
+						}
+
+		 					
+		 					},5000)
+
+
+
+	 				})
+
 	 				$("body").append(question);
-	 				
+
 	 			}
 
 	 		} else{
@@ -180,6 +338,10 @@
 		 			}
 	 			
 	 		}
+
+	 		for (var i = 0; i < allParticles.length; i++) {
+ 				allParticles[i].update();
+ 			}
 
 
 	 	},17);
